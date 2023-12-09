@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 @Component
@@ -25,14 +27,23 @@ public class JwtTokenUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String email) {
+    public String generateToken(String email, String role) {
+        Map<String, Object> claimsMap = new HashMap<>();
+        claimsMap.put("role", role);  // Include the user's role in the token
+
         return Jwts.builder()
+                .setClaims(claimsMap) // Set the custom claims
                 .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getSigningKey())
                 .compact();
     }
+
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
 
     public Boolean validateToken(String token, String email) {
         final String extractedEmail = extractEmail(token);

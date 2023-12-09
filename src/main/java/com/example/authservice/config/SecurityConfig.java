@@ -2,6 +2,7 @@ package com.example.authservice.config;
 
 
 import com.example.authservice.ServiceImpl.CustomUserDetailsServiceImpl;
+import com.example.authservice.repository.AdminRepository;
 import com.example.authservice.repository.OrganizationRepository;
 import com.example.authservice.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,12 @@ public class SecurityConfig {
     @Autowired
     OrganizationRepository organizationRepository;
 
+    @Autowired
+    AdminRepository adminRepository;
+
     @Bean
     public UserDetailsService userDetailsService(){
-        return new CustomUserDetailsServiceImpl(organizationRepository);
+        return new CustomUserDetailsServiceImpl(organizationRepository,adminRepository);
     }
 
 
@@ -64,8 +68,5 @@ public class SecurityConfig {
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
-
-
-
 
 }

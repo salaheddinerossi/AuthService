@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.authservice.dto.LoginDto;
 import com.example.authservice.security.JwtTokenUtil;
 import com.example.authservice.response.JwtResponse;
+import com.example.authservice.repository.OrganizationRepository;
+import com.example.authservice.repository.AdminRepository;
 
 @RestController
 public class AuthController {
@@ -22,12 +24,22 @@ public class AuthController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginDto loginDto) {
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private AdminRepository adminRepository;
+
+    @PostMapping("/organization/login")
+    public ResponseEntity<?> createOrganizationAuthenticationToken(@RequestBody LoginDto loginDto) {
         try {
             authenticate(loginDto.getEmail(), loginDto.getPassword());
-            final String token = jwtTokenUtil.generateToken(loginDto.getEmail());
-            return ResponseEntity.ok(new JwtResponse(token));
+            if (organizationRepository.findByEmail(loginDto.getEmail()).isPresent()) {
+                final String token = jwtTokenUtil.generateToken(loginDto.getEmail(), "ROLE_ORGANIZATION");
+                return ResponseEntity.ok(new JwtResponse(token));
+            } else {
+                throw new BadCredentialsException("Invalid organization credentials");
+            }
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         } catch (Exception e) {
@@ -35,12 +47,25 @@ public class AuthController {
         }
     }
 
-    private void authenticate(String email, String password) throws Exception {
+    @PostMapping("/admin/login")
+    public ResponseEntity<?> createAdminAuthenticationToken(@RequestBody LoginDto loginDto) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            authenticate(loginDto.getEmail(), loginDto.getPassword());
+            if (adminRepository.findByEmail(loginDto.getEmail()).isPresent()) {
+                final String token = jwtTokenUtil.generateToken(loginDto.getEmail(), "ROLE_ADMIN");
+                return ResponseEntity.ok(new JwtResponse(token));
+            } else {
+                throw new BadCredentialsException("Invalid admin credentials");
+            }
         } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Incorrect email or password", e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        } catch (Exception e) {
+            e.printStackTrace();  // It's helpful to log the exception for debugging
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
     }
-}
 
+    private void authenticate(String email, String password) throws Exception {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+    }
+}
