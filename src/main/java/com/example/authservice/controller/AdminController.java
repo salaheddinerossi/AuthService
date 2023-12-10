@@ -10,12 +10,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired
-    AdminService adminService;
+    private final AdminService adminService;
+
+    public AdminController(AdminService adminService) {
+        this.adminService = adminService;
+    }
+
 
     @PostMapping("/register")
     public Admin registerAdmin(@RequestBody AdminDto adminDto){
-        System.out.println(adminDto);
         return adminService.registerAdmin(adminDto);
     }
 
