@@ -34,7 +34,7 @@ public class OrganizationController {
     @DeleteMapping("/{id}")
     public String deleteOrganization(@PathVariable Long id){
         organizationService.deleteOrganization(id);
-        return "organization has been deleted";
+        return "the organization has been deleted";
     }
 
     @GetMapping("/")
