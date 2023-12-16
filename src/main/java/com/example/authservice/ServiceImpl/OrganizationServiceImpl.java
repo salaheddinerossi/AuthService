@@ -49,11 +49,16 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public Organization updateOrganization(Long id, OrganizationDto organizationDto) {
-        organizationRepository.findByEmail(organizationDto.getEmail()).ifPresent(org -> {
-            throw new EmailAlreadyUsedException("Email already in use: " + organizationDto.getEmail());
-        });
 
-        Organization organization = new Organization();
+        Organization organization = getOrganizationById(id);
+
+
+        if(!organizationDto.getEmail().equals(organization.getEmail())){
+            organizationRepository.findByEmail(organizationDto.getEmail()).ifPresent(org -> {
+                throw new EmailAlreadyUsedException("Email already in use: " + organizationDto.getEmail());
+            });
+        }
+
         organization.setAddress(organizationDto.getAddress());
         organization.setDocuments(organizationDto.getDocuments());
         organization.setDescription(organizationDto.getDescription());
@@ -95,4 +100,10 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     }
 
+    @Override
+    public Organization getOrganizationByEmail(String email) {
+        return organizationRepository.findByEmail(email).orElseThrow(
+                RuntimeException::new
+        );
+    }
 }

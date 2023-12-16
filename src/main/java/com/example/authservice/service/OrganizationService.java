@@ -26,5 +26,7 @@ public interface OrganizationService {
 
     void deactivateOrganizationAccount(Long id);
 
+    Organization getOrganizationByEmail(String email);
+
 
 }

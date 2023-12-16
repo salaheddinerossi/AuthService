@@ -5,9 +5,14 @@ import com.example.authservice.dto.OrganizationDto;
 import com.example.authservice.model.Organization;
 import com.example.authservice.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/organization")
@@ -27,12 +32,26 @@ public class OrganizationController {
     }
 
     @PutMapping("/{id}")
-    public Organization updateOrganization(@PathVariable Long id,@RequestBody OrganizationDto organizationDto){
-        return organizationService.updateOrganization(id,organizationDto);
+    public ResponseEntity<?> updateOrganization(
+            @PathVariable Long id,
+            @RequestBody OrganizationDto organizationDto,
+            @AuthenticationPrincipal UserDetails userDetails
+    ){
+        System.out.println(userDetails.getAuthorities());
+
+        Organization existingOrganization = organizationService.getOrganizationByEmail(userDetails.getUsername());
+
+        if(Objects.equals(existingOrganization.getId(), id)){
+            return ResponseEntity.status(HttpStatus.OK).body(organizationService.updateOrganization(id,organizationDto));
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: you are not the account user.");
+
     }
 
     @DeleteMapping("/{id}")
-    public String deleteOrganization(@PathVariable Long id){
+    public String deleteOrganization(@PathVariable Long id,@AuthenticationPrincipal UserDetails userDetails){
+
         organizationService.deleteOrganization(id);
         return "organization has been deleted";
     }
@@ -43,9 +62,18 @@ public class OrganizationController {
     }
 
     @PatchMapping("/changepassword")
-    public String changePassword(@RequestBody Long id,String newPassword){
-        organizationService.changeOrganizationPassword(id,newPassword);
-        return "the password has been changed";
+    public ResponseEntity<?> changePassword(@RequestBody OrganizationDto organizationDto, @AuthenticationPrincipal UserDetails userDetails) {
+
+        Organization organization = organizationService.getOrganizationByEmail(userDetails.getUsername());
+        if (Objects.equals(organization.getId(), organizationDto.getId())) {
+            organizationService.changeOrganizationPassword(
+                    organizationDto.getId(),
+                    organizationDto.getPassword()
+            );
+            return ResponseEntity.ok("The password has been changed.");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: you are not the account user.");
+        }
     }
 
     @PatchMapping("/activite/{id}")
