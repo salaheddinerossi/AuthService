@@ -18,17 +18,20 @@ import com.example.authservice.repository.AdminRepository;
 @RestController
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    private OrganizationRepository organizationRepository;
+    private final OrganizationRepository organizationRepository;
 
-    @Autowired
-    private AdminRepository adminRepository;
+    private final AdminRepository adminRepository;
+
+    public AuthController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, OrganizationRepository organizationRepository, AdminRepository adminRepository) {
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.organizationRepository = organizationRepository;
+        this.adminRepository = adminRepository;
+    }
 
     @PostMapping("/organization/login")
     public ResponseEntity<?> createOrganizationAuthenticationToken(@RequestBody LoginDto loginDto) {

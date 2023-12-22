@@ -3,10 +3,13 @@ package com.example.authservice.ServiceImpl;
 import com.example.authservice.dto.OrganizationDto;
 import com.example.authservice.exception.EmailAlreadyUsedException;
 import com.example.authservice.exception.OldPasswordNotMatchedException;
+import com.example.authservice.exception.OrganizationNotFoundException;
 import com.example.authservice.exception.PasswordSameAsOldException;
 import com.example.authservice.model.Organization;
+import com.example.authservice.repository.OrganizationAuthorizationRepository;
 import com.example.authservice.repository.OrganizationRepository;
 import com.example.authservice.service.OrganizationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +24,12 @@ public class OrganizationServiceImpl implements OrganizationService {
     private final OrganizationRepository organizationRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public OrganizationServiceImpl(OrganizationRepository organizationRepository,PasswordEncoder passwordEncoder){
+    private final OrganizationAuthorizationRepository organizationAuthorizationRepository;
+
+    public OrganizationServiceImpl(OrganizationRepository organizationRepository, PasswordEncoder passwordEncoder, OrganizationAuthorizationRepository organizationAuthorizationRepository){
         this.organizationRepository=organizationRepository;
         this.passwordEncoder= passwordEncoder;
+        this.organizationAuthorizationRepository = organizationAuthorizationRepository;
     }
 
     @Override
@@ -31,7 +37,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
         return organizationRepository.findById(id)
                 .orElseThrow(
-                        () -> new RuntimeException("Organization not found" +id)
+                        OrganizationNotFoundException::new
                 );
     }
 
@@ -74,6 +80,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public void deleteOrganization(Long id) {
+
+        organizationAuthorizationRepository.deleteByOrganizationId(id);
         Organization organization=getOrganizationById(id);
         organizationRepository.delete(organization);
     }
