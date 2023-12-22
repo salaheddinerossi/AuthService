@@ -37,6 +37,7 @@ public class OrganizationController {
     public ResponseEntity<?> getOrganizaion(@PathVariable Long id,@AuthenticationPrincipal UserDetails userDetails){
     //completed
 
+
         if(SecurityUtils.isAdmin(userDetails.getAuthorities())){
             return ResponseEntity.status(HttpStatus.OK).body(organizationService.getOrganizationById(id));
         }
