@@ -2,6 +2,8 @@ package com.example.authservice.ServiceImpl;
 
 import com.example.authservice.dto.OrganizationDto;
 import com.example.authservice.exception.EmailAlreadyUsedException;
+import com.example.authservice.exception.OldPasswordNotMatchedException;
+import com.example.authservice.exception.PasswordSameAsOldException;
 import com.example.authservice.model.Organization;
 import com.example.authservice.repository.OrganizationRepository;
 import com.example.authservice.service.OrganizationService;
@@ -9,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -81,10 +84,22 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public void changeOrganizationPassword(Long id, String newPassword) {
-        Organization organization = getOrganizationById(id);
+    public void changeOrganizationPassword(Long id, String oldPassword,String newPassword) {
+
+        System.out.println(passwordEncoder.encode(oldPassword));
+
+        Organization organization = this.getOrganizationById(id);
+
+        if (!passwordEncoder.matches(oldPassword,organization.getPassword())){
+            throw new OldPasswordNotMatchedException();
+        }
+        if (passwordEncoder.matches(newPassword,organization.getPassword())){
+            throw new PasswordSameAsOldException();
+        }
+
         String encodedPassword = passwordEncoder.encode(newPassword);
         organization.setPassword(encodedPassword);
+        organizationRepository.save(organization);
     }
 
     @Override

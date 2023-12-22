@@ -20,13 +20,14 @@ public interface OrganizationService {
 
     List<Organization> findAllOrganizations();
 
-    void changeOrganizationPassword(Long id, String newPassword);
+    void changeOrganizationPassword(Long id, String oldPassword,String newPassword);
 
     void activateOrganizationAccount(Long id);
 
     void deactivateOrganizationAccount(Long id);
 
     Organization getOrganizationByEmail(String email);
+
 
 
 }
