@@ -30,14 +30,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AuthorizationNotFoundException.class)
-    public ResponseEntity<Object> handelAuthorizationOrganizationNotFound(AuthorizationNotFoundException ex) {
+    @ExceptionHandler(OrganizationAuthorizationNotFoundException.class)
+    public ResponseEntity<Object> handelAuthorizationOrganizationNotFound(OrganizationAuthorizationNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(OrganizationNotFoundException.class)
     public ResponseEntity<Object> handelOrganizationNotFound(OrganizationNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthorizationAlreadyExistsException.class)
+    public ResponseEntity<Object> handelAuthorizationAlreadyExists(AuthorizationAlreadyExistsException ex){
+        return new ResponseEntity<>(ex.getMessage(),HttpStatus.BAD_REQUEST);
     }
 
 

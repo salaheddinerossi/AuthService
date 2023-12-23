@@ -9,13 +9,10 @@ import com.example.authservice.model.Organization;
 import com.example.authservice.repository.OrganizationAuthorizationRepository;
 import com.example.authservice.repository.OrganizationRepository;
 import com.example.authservice.service.OrganizationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 
 @Service
@@ -78,6 +75,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizationRepository.save(organization);
     }
 
+    @Transactional
     @Override
     public void deleteOrganization(Long id) {
 
@@ -114,12 +112,14 @@ public class OrganizationServiceImpl implements OrganizationService {
     public void activateOrganizationAccount(Long id) {
         Organization organization = getOrganizationById(id);
         organization.setIsActive(true);
+        organizationRepository.save(organization);
     }
 
     @Override
     public void deactivateOrganizationAccount(Long id) {
         Organization organization = getOrganizationById(id);
         organization.setIsActive(false);
+        organizationRepository.save(organization);
 
     }
 

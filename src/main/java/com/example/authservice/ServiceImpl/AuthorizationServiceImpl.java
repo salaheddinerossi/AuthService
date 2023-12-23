@@ -3,6 +3,7 @@ package com.example.authservice.ServiceImpl;
 
 import com.example.authservice.dto.AuthorizationDto;
 import com.example.authservice.dto.OrganizationAuthorizationDto;
+import com.example.authservice.exception.AuthorizationAlreadyExistsException;
 import com.example.authservice.exception.AuthorizationNotFoundException;
 import com.example.authservice.exception.OrganizationNotFoundException;
 import com.example.authservice.model.Authorization;
@@ -49,6 +50,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                 OrganizationNotFoundException::new
         );
 
+        if((organizationAuthorizationRepository.findByOrganizationAndAuthorization(organization,authorization)).isPresent()){
+            throw new AuthorizationAlreadyExistsException();
+        }
+
         OrganizationAuthorization organizationAuthorization = new OrganizationAuthorization();
         organizationAuthorization.setAuthorization(authorization);
         organizationAuthorization.setOrganization(organization);
@@ -60,8 +65,6 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public void deleteOrganizationAuthorization(Long id) {
-
-
 
         organizationAuthorizationRepository.deleteById(id);
 
@@ -79,8 +82,8 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
         Authorization authorization = new Authorization();
 
-        authorization.setName(authorization.getName());
-        authorization.setRequiredPaper(authorization.getRequiredPaper());
+        authorization.setName(authorizationDto.getName());
+        authorization.setRequiredPaper(authorizationDto.getRequiredPaper());
 
         return authorizationRepository.save(authorization);
 
@@ -96,6 +99,8 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         return authorizationRepository.save(authorization);
     }
 
+
+    @Transactional
     @Override
     public void deleteAuthorization(Long id) {
 
