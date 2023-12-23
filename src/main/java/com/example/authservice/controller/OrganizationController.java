@@ -89,6 +89,7 @@ public class OrganizationController {
     @GetMapping("/")
     public ResponseEntity<?> getAllOrganizations(@AuthenticationPrincipal UserDetails userDetails){
          //only for admin
+
         if (SecurityUtils.isAdmin(userDetails.getAuthorities())){
             return ResponseEntity.status(HttpStatus.OK).body(organizationService.findAllOrganizations());
         }
@@ -126,7 +127,6 @@ public class OrganizationController {
             organizationService.deactivateOrganizationAccount(id);
             return ResponseEntity.status(HttpStatus.OK).body("account has been deactivated");
         }
-
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("only admin can effect this operation");
     }
 
