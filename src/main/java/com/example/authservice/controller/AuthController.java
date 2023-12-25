@@ -1,5 +1,7 @@
 package com.example.authservice.controller;
 
+import com.example.authservice.dto.AuthorizationDto;
+import com.example.authservice.response.UserDetailsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,10 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.example.authservice.dto.LoginDto;
 import com.example.authservice.security.JwtTokenUtil;
 import com.example.authservice.response.JwtResponse;
@@ -66,7 +65,7 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         } catch (Exception e) {
-            e.printStackTrace();  // It's helpful to log the exception for debugging
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
     }
@@ -74,7 +73,13 @@ public class AuthController {
     @GetMapping("/userDetails")
     public ResponseEntity<?> getUserDetails(@AuthenticationPrincipal UserDetails userDetails){
         if (userDetails != null) {
-            return ResponseEntity.ok(userDetails);
+            String role = userDetails.getAuthorities().isEmpty() ? null :
+                        userDetails.getAuthorities().iterator().next().getAuthority();
+
+            UserDetailsResponse userDetailsResponse = new UserDetailsResponse();
+            userDetailsResponse.setEmail(userDetails.getUsername());
+            userDetailsResponse.setRole(role);
+            return ResponseEntity.ok(userDetailsResponse);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
         }

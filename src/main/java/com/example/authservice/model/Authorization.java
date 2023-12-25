@@ -1,14 +1,11 @@
 package com.example.authservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
-@Entity(name = "authorization")
-
+@Entity
+@Table(name = "\"authorization\"")
 public class Authorization {
 
     @Id

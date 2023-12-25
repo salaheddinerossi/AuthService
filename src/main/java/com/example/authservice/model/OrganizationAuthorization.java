@@ -5,13 +5,14 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
-@Entity(name = "organizationAuthorization")
+@Entity(name = "organization_authorization")
 public class OrganizationAuthorization {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "dedicated_paper")
     private String dedicatedPaper;
 
     @ManyToOne
