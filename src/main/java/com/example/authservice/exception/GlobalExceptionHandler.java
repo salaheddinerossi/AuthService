@@ -14,11 +14,16 @@ public class GlobalExceptionHandler {
     public String handleEmailAlreadyUsedException(EmailAlreadyUsedException e) {
         return e.getMessage();
     }
-
     @ExceptionHandler(OldPasswordNotMatchedException.class)
     public ResponseEntity<Object> handleOldPasswordNotMatched(OldPasswordNotMatchedException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(OrganizationNotActiveException.class)
+    public ResponseEntity<Object> handelOrganizationNotActiveException(OrganizationNotActiveException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(PasswordSameAsOldException.class)
     public ResponseEntity<Object> handlePasswordSameAsOld(PasswordSameAsOldException ex) {

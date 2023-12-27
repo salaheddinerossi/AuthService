@@ -6,7 +6,6 @@ import com.example.authservice.dto.OrganizationDto;
 import com.example.authservice.model.Organization;
 import com.example.authservice.service.OrganizationService;
 import com.example.authservice.util.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

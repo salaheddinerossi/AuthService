@@ -1,6 +1,9 @@
 package com.example.authservice.controller;
 
 import com.example.authservice.dto.AuthorizationDto;
+import com.example.authservice.exception.OrganizationNotActiveException;
+import com.example.authservice.exception.OrganizationNotFoundException;
+import com.example.authservice.model.Organization;
 import com.example.authservice.response.UserDetailsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,6 +44,14 @@ public class AuthController {
             authenticate(loginDto.getEmail(), loginDto.getPassword());
             if (organizationRepository.findByEmail(loginDto.getEmail()).isPresent()) {
                 final String token = jwtTokenUtil.generateToken(loginDto.getEmail(), "ROLE_ORGANIZATION");
+                Organization organization = organizationRepository.findByEmail(loginDto.getEmail()).orElseThrow(
+                        OrganizationNotFoundException::new
+                );
+
+                if (!organization.getIsActive()){
+                    throw new OrganizationNotActiveException();
+                }
+
                 return ResponseEntity.ok(new JwtResponse(token));
             } else {
                 throw new BadCredentialsException("Invalid organization credentials");
