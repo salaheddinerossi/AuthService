@@ -3,8 +3,9 @@ package com.example.authservice.controller;
 import com.example.authservice.dto.AdminDto;
 import com.example.authservice.model.Admin;
 import com.example.authservice.service.AdminService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/admin")
@@ -18,7 +19,7 @@ public class AdminController {
 
 
     @PostMapping("/register")
-    public Admin registerAdmin(@RequestBody AdminDto adminDto){
+    public Admin registerAdmin(@Valid @RequestBody AdminDto adminDto){
         return adminService.registerAdmin(adminDto);
     }
 

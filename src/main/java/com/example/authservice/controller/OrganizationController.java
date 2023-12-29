@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +29,7 @@ public class OrganizationController {
 
     @PostMapping("/register")
     //completed
-    public Organization registerOrganization(@RequestBody OrganizationDto organizationDto){
+    public Organization registerOrganization(@Valid @RequestBody OrganizationDto organizationDto){
         return organizationService.registerOrganization(organizationDto);
     }
 

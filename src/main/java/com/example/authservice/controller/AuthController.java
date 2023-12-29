@@ -20,6 +20,8 @@ import com.example.authservice.response.JwtResponse;
 import com.example.authservice.repository.OrganizationRepository;
 import com.example.authservice.repository.AdminRepository;
 
+import javax.validation.Valid;
+
 @RestController
 public class AuthController {
 
@@ -39,7 +41,7 @@ public class AuthController {
     }
 
     @PostMapping("/organization/login")
-    public ResponseEntity<?> createOrganizationAuthenticationToken(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<?> createOrganizationAuthenticationToken(@Valid @RequestBody LoginDto loginDto) {
         try {
             authenticate(loginDto.getEmail(), loginDto.getPassword());
             if (organizationRepository.findByEmail(loginDto.getEmail()).isPresent()) {
@@ -64,7 +66,7 @@ public class AuthController {
     }
 
     @PostMapping("/admin/login")
-    public ResponseEntity<?> createAdminAuthenticationToken(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<?> createAdminAuthenticationToken(@Valid @RequestBody LoginDto loginDto) {
         try {
             authenticate(loginDto.getEmail(), loginDto.getPassword());
             if (adminRepository.findByEmail(loginDto.getEmail()).isPresent()) {

@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -37,7 +38,7 @@ public class AuthorizationController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> addAuthorization(@RequestBody AuthorizationDto authorizationDto){
+    public ResponseEntity<?> addAuthorization(@Valid @RequestBody AuthorizationDto authorizationDto){
 
         Authorization authorization = authorizationService.addAuthorization(authorizationDto);
         return ResponseEntity.status(HttpStatus.OK).body(authorization);
@@ -45,7 +46,7 @@ public class AuthorizationController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAuthorization(@RequestBody AuthorizationDto authorizationDto,@PathVariable Long id){
+    public ResponseEntity<?> updateAuthorization(@Valid @RequestBody AuthorizationDto authorizationDto,@PathVariable Long id){
 
         Authorization authorization = authorizationService.updateAuthorization(id,authorizationDto);
         return ResponseEntity.status(HttpStatus.OK).body(authorization);
@@ -58,7 +59,7 @@ public class AuthorizationController {
     }
 
     @PostMapping("/addAuthorization")
-    public ResponseEntity<?> addAuthorizationToOrganization (@RequestBody OrganizationAuthorizationDto organizationAuthorizationDto){
+    public ResponseEntity<?> addAuthorizationToOrganization (@Valid @RequestBody OrganizationAuthorizationDto organizationAuthorizationDto){
 
         OrganizationAuthorization organizationAuthorization = authorizationService.addAuthorizationOrganization(organizationAuthorizationDto);
         return ResponseEntity.status(HttpStatus.OK).body(organizationAuthorization);
