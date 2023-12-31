@@ -55,6 +55,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(),HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(AdminNotFoundException.class)
+    public ResponseEntity<Object> handelAdminNotFoundException(AdminNotFoundException ex){
+        return new ResponseEntity<>(ex.getMessage(),HttpStatus.BAD_REQUEST);
+    }
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
