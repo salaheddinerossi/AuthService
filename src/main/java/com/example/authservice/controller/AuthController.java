@@ -1,13 +1,11 @@
 package com.example.authservice.controller;
 
-import com.example.authservice.dto.AuthorizationDto;
 import com.example.authservice.exception.AdminNotFoundException;
 import com.example.authservice.exception.OrganizationNotActiveException;
 import com.example.authservice.exception.OrganizationNotFoundException;
 import com.example.authservice.model.Admin;
 import com.example.authservice.model.Organization;
 import com.example.authservice.response.UserDetailsResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -56,7 +54,7 @@ public class AuthController {
                     throw new OrganizationNotActiveException();
                 }
 
-                return ResponseEntity.ok(new JwtResponse(token,organization.getId(),organization.getName()));
+                return ResponseEntity.ok(new JwtResponse(token,organization.getId(),organization.getName(),"organization"));
             } else {
                 throw new BadCredentialsException("Invalid organization credentials");
             }
@@ -76,7 +74,7 @@ public class AuthController {
                         AdminNotFoundException::new
                 );
                 final String token = jwtTokenUtil.generateToken(loginDto.getEmail(), "ROLE_ADMIN");
-                return ResponseEntity.ok(new JwtResponse(token,admin.getId(), admin.getName()));
+                return ResponseEntity.ok(new JwtResponse(token,admin.getId(), admin.getName(),"admin"));
             } else {
                 throw new BadCredentialsException("Invalid admin credentials");
             }

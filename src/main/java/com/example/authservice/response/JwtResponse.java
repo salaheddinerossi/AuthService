@@ -7,6 +7,16 @@ public class JwtResponse {
 
     private String name;
 
+    private String role;
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
     public Long getId() {
         return id;
     }
@@ -23,10 +33,11 @@ public class JwtResponse {
         this.id = id;
     }
 
-    public JwtResponse(String token,Long id,String name) {
+    public JwtResponse(String token,Long id,String name,String role) {
         this.id=id;
         this.name=name;
         this.token = token;
+        this.role=role;
     }
 
 
