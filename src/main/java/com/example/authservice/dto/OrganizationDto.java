@@ -31,7 +31,6 @@ public class OrganizationDto {
 
     private String documents;
 
-    @NotNull(message = "isActive is required")
     private Boolean isActive;
 
 }
