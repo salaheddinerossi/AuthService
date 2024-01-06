@@ -15,8 +15,6 @@ public class OrganizationAuthorizationDto {
     @NotNull(message = "Authorization ID is required")
     private Long authorization_id;
 
-    @NotBlank(message = "Dedicated Paper is required")
-    @URL(message = "Dedicated Paper must be a valid URL")
     private String dedicatedPaper;
 
 }

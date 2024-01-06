@@ -72,10 +72,9 @@ public class AuthorizationController {
 
     @GetMapping("/organization/{id}")
     public ResponseEntity<?> getAuthorizationsByOrganization(@PathVariable Long id,@AuthenticationPrincipal UserDetails userDetails){
-
+        System.out.println("hello");
         Organization organization = organizationService.getOrganizationById(id);
         List<OrganizationAuthorization> organizationAuthorizations = authorizationService.getOrganizationAuthorizations(organization);
-
         if (SecurityUtils.isAdmin(userDetails.getAuthorities())){
             return ResponseEntity.status(HttpStatus.OK).body(organizationAuthorizations);
         }
