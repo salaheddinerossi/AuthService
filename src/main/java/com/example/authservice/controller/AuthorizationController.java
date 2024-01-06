@@ -8,12 +8,16 @@ import com.example.authservice.model.Organization;
 import com.example.authservice.model.OrganizationAuthorization;
 import com.example.authservice.service.AuthorizationService;
 import com.example.authservice.service.OrganizationService;
+import com.example.authservice.util.SecurityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/authorization")
@@ -67,11 +71,24 @@ public class AuthorizationController {
     }
 
     @GetMapping("/organization/{id}")
-    public ResponseEntity<?> getAuthorizationsByOrganization(@PathVariable Long id){
+    public ResponseEntity<?> getAuthorizationsByOrganization(@PathVariable Long id,@AuthenticationPrincipal UserDetails userDetails){
 
         Organization organization = organizationService.getOrganizationById(id);
         List<OrganizationAuthorization> organizationAuthorizations = authorizationService.getOrganizationAuthorizations(organization);
-        return ResponseEntity.status(HttpStatus.OK).body(organizationAuthorizations);
+
+        if (SecurityUtils.isAdmin(userDetails.getAuthorities())){
+            return ResponseEntity.status(HttpStatus.OK).body(organizationAuthorizations);
+        }
+
+        if(SecurityUtils.isOrganization(userDetails.getAuthorities())){
+            Organization existingOrganization = organizationService.getOrganizationByEmail(userDetails.getUsername());
+            if(Objects.equals(existingOrganization.getId(), id)){
+                return ResponseEntity.status(HttpStatus.OK).body(organizationAuthorizations);
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("you don't have the access to this route");
+
     }
 
 
